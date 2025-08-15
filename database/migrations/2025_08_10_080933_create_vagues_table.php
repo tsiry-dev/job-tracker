@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable();
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
         });

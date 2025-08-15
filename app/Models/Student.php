@@ -15,5 +15,11 @@ class Student extends Model
         'name',
         'slug',
         'phone',
+        'status'
     ];
+
+    public function vague()
+    {
+        return $this->belongsTo(Vague::class, 'vague_id');
+    }
 }

@@ -2,7 +2,7 @@
 
 @plugin 'tailwindcss-animate';
 
-@source '../views';
+/* @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
@@ -138,4 +138,30 @@
     body {
         @apply bg-background text-foreground;
     }
+} */
+
+
+.bg-primary {
+    @apply bg-cyan-700;
+}
+
+
+
+.text-primary {
+    @apply bg-cyan-700;
+}
+
+.btn-success {
+    @apply bg-green-600 text-white py-1 px-3 rounded-sm text-sm cursor-pointer;
+}
+
+
+
+/* ///FORM */
+.form-input {
+    @apply bg-white w-full p-2 outline-none border-1 border-gray-300 rounded-lg text-gray-600 font-bold
+}
+
+.form-label {
+    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300;
 }

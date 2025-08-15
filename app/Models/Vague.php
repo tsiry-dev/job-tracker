@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Vague extends Model
 {
@@ -16,5 +18,18 @@ class Vague extends Model
        'slug',
        'start_date',
        'end_date',
+       'status'
     ];
+
+    public function students(): HasMany
+    {
+        return $this->hasMany(Student::class, 'vague_id');
+    }
+
+    public function level(): BelongsTo
+    {
+        return $this->belongsTo(Level::class, 'level_id');
+    }
+
+
 }

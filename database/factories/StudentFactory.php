@@ -25,6 +25,7 @@ class StudentFactory extends Factory
             'name' => fake()->name(),
             'slug' => fake()->slug(),
             'phone' => fake()->phoneNumber(),
+            'status' => fake()->boolean()
         ];
     }
 }

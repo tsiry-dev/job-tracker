@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'tsiry',
             'email' => 'tsiri@gmail.com',
-            'password' => bcrypt('0718'),
+            'password' => bcrypt('password'),
+            'role' => 'admin'
         ]);
 
         DB::table('levels')->insert(Level::LEVEL_LISTS);

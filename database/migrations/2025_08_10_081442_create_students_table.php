@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug');
             $table->string('phone')->nullable();
+            $table->boolean('status')->default(true);
 
             $table->timestamps();
         });

@@ -28,6 +28,7 @@ class VagueFactory extends Factory
             'slug' => \illuminate\Support\Str::slug($name),
             'start_date' => fake()->dateTimeBetween('-1 year', 'now'),
             'end_date' => fake()->dateTimeBetween('-1 year', 'now'),
+            'status' => fake()->boolean(),
         ];
     }
 }

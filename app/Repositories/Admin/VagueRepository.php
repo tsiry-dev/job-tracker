@@ -50,6 +50,7 @@ class VagueRepository implements VagueInterface
 
     public function delete(array $ids): void
     {
+        // dd($ids);
         Vague::destroy($ids);
     }
 

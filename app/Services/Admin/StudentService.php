@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin;
 
+use App\Dtos\Admin\Students\StudentUpdateDTO;
 use App\Models\Student;
 use App\Repositories\Admin\StudentRepository;
 use Illuminate\Http\RedirectResponse;
@@ -30,6 +31,11 @@ class StudentService
         }
 
         return $this->repository->getStudent($slug);
+    }
+
+    public function update(int $id,StudentUpdateDTO $data): void
+    {
+        $this->repository->update($id, $data);
     }
 
     public function delete(int $id): void

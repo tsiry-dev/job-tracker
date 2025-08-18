@@ -11,4 +11,20 @@ export type Vague = {
     updated_at: string;
     status: boolean; // si tu veux calculer côté front
     students: Student[]; // idem
+    level: any;
+};
+
+type Module = {
+    id: number;
+    name: string;
+    slug: string;
+    created_at: string;
+    updated_at: string;
+    description: string;
+    status: string
+}
+
+
+export type VagueWithModules = Vague & {
+    modules: Module[];
 };

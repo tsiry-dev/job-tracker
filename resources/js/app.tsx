@@ -6,6 +6,8 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 import { configureEcho } from '@laravel/echo-react';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 
 // configureEcho({
 //     broadcaster: 'reverb',
@@ -19,7 +21,11 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        root.render(
+           <Provider store={store}>
+               <App {...props} />
+           </Provider>
+        );
     },
     progress: {
         color: '#4B5563',

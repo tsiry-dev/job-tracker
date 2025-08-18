@@ -13,7 +13,7 @@ export default function AppLayout({ children , title}: AppLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const page = usePage();
-  console.log(page);
+//   console.log(page);
 
 
   const form = useForm();

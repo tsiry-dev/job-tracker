@@ -3,6 +3,7 @@
 namespace App\Repositories\Admin;
 
 use App\Contracts\Admin\StudentInterface;
+use App\Dtos\Admin\Students\StudentUpdateDTO;
 use App\Models\Student;
 
 class StudentRepository implements StudentInterface
@@ -24,7 +25,21 @@ class StudentRepository implements StudentInterface
 
     public function getStudent(string $slug): Student
     {
-         return Student::with(['vague.level'])->where('slug', $slug)->first();
+         return Student::with(['vague.level', 'vague.modules', 'vague.students'])->where('slug', $slug)->first();
+    }
+
+    public function update(int $id,StudentUpdateDTO $data): void
+    {
+        // dd($data);
+
+        Student::where('id', $id)->update(  [
+            'vague_id' => $data->vague_id,
+            'slug' => \Illuminate\Support\Str::slug($data->name),
+            'name' => $data->name,
+            'phone' => $data->phone,
+            'status' => $data->status,
+            'created_at' => $data->created_at,
+        ]);
     }
 
     public function delete(int $id): void

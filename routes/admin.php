@@ -39,6 +39,9 @@ Route::middleware(['auth', 'admin'])
         Route::get('/student/{slug}', 'show')
             ->name('student.show');
 
+        Route::put('/student/update', 'update')
+            ->name('student.update');
+
         Route::delete('/student/{id}', 'destroy')
             ->name('student.destroy');
 

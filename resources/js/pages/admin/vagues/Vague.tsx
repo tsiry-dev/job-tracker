@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
 import { Edit, Trash2, Eye, Users, Save, BookUser, CirclePlay, Gauge, Ban, ShieldCheck, ShieldX, User, MoreVertical, MoreHorizontal, X } from 'lucide-react';
 import Swal from 'sweetalert2';
@@ -17,6 +17,13 @@ import FormContentGroup from '@/components/app/FormContentGroup';
 import NewVague from './NewVague';
 import PaginationComponent from '@/components/app/Pagination';
 import { Student } from '@/types/student';
+import StudentItelVague from './StudentItelVague';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/app/store';
+import { handleResetStudentSelected } from '@/features/studentSlice';
+import UpdateStudent from './UpdateStudent';
+import { setActif, setVague } from '@/features/vagueSlice';
+import { handleSelectedVague } from '@/features/vagueSlice';
 
 
 
@@ -50,8 +57,9 @@ type VagueProps = {
 
 export default function Vague({ vagues , levels}: VagueProps) {
 
-    console.log(vagues);
-    console.log(levels);
+    // console.log(vagues);
+    const dispatch = useDispatch();
+
 
 
    const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
@@ -59,6 +67,24 @@ export default function Vague({ vagues , levels}: VagueProps) {
    const [isOpenModalDetails, setIsOpenModalDetails] = useState(false);
    const [selectedVague, setSelectedVague] = useState<Vague | any>(null);
    const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+   const [selectedStudent, setSelectedStudent] = useState<Student | any>(null);
+
+   const studentSelected = useSelector((state: RootState) => state.students.selected);
+   const vagueList = useSelector((state: RootState) => state.vagues.vagues);
+   const selectedVagueItem = useSelector((state: RootState) => state.vagues.selectedVague);
+
+   useEffect(() =>  {
+      dispatch(
+        setActif(
+            vagues.data.filter((vague: Vague) => vague.status)
+        )
+      )
+      dispatch(setVague(vagues.data))
+      dispatch(handleSelectedVague(
+          vagues.data.find((vague: Vague) => vague.id === selectedVagueItem?.id)
+      ))
+   }, [vagues]);
+
 
    const form = useForm();
 
@@ -71,6 +97,8 @@ export default function Vague({ vagues , levels}: VagueProps) {
    }
    const handleCloseModalDetails = () => {
       setIsOpenModalDetails(false);
+      dispatch(handleSelectedVague(null))
+
    }
 
    const handleSelectVague = (id: number) => {
@@ -82,6 +110,7 @@ export default function Vague({ vagues , levels}: VagueProps) {
    }
 
     const handleShowDetails = (vague: Vague) => {
+      dispatch(handleSelectedVague(vague))
       setSelectedVague(vague);
       setIsOpenModalDetails(true);
     }
@@ -271,7 +300,7 @@ export default function Vague({ vagues , levels}: VagueProps) {
                 </tr>
                 </thead>
                 <tbody>
-                {vagues.data.map((vague) => (
+                {vagueList.map((vague) => (
                     <tr key={vague.id} className="border-b last:border-b-0 hover:bg-gray-50 transition">
                     <td className="px-6 py-4 whitespace-nowrap font-medium flex gap-2 items-center">
                         <span>
@@ -382,80 +411,45 @@ export default function Vague({ vagues , levels}: VagueProps) {
                    </h2>
                 </div>
 
-                <div className=''>
-                   <h2 className='flex gap-2 items-end'><Users /> <span>eleves  <strong>({selectedVague?.students?.length ?? 0})</strong></span></h2>
+                <div className='student-list'>
+                  {studentSelected ?
+                      <UpdateStudent
+                           setOpenMenuId={setOpenMenuId}
+                           setSelectedVague={setSelectedVague}
+                           selectedVague={selectedVague}
+                           setIsOpenModalDetails={setIsOpenModalDetails}
+                           vagueList={vagueList}
+                    />
+                  :
+                    <div>
+                        <h2 className='flex gap-2 items-end'><Users /> <span>eleves  <strong>({selectedVague?.students?.length ?? 0})</strong></span></h2>
 
-                   <ul className='mt-3'>
-                     {
-                         selectedVague.students.length > 0 ?
-                            selectedVague.students
-                            // .sort((a: Student , b: Student) => a.status < b.status ? 1 : -1)
-                            .map((student: Student) => (
-                                <li key={student.id} className='border-1 hover:bg-cyan-700 hover:text-white hover:border-gray-400 border-gray-400 transition flex items-center gap-1 justify-between bg-gray-100 p-1 mb-2 rounded-lg'>
-                                    <div className='flex gap-1'>
-                                        <User size={15} />
-                                        <span>{student.name} </span>
-                                    </div>
-                                    <div className='flex gap-1'>
-                                        <span
-                                            className='cursor-pointer'
-                                            onClick={() => handleToogleStatus(student.id)}
-                                        >
-                                            {student.status ?
-                                            <Badge icon type="success">Actif</Badge>
-                                            :
+                        <ul className='mt-3'>
+                            {
+                                selectedVagueItem?.students.length ?? 0 > 0 ?
+                                    selectedVagueItem?.students
+                                    // .sort((a: Student , b: Student) => a.status < b.status ? 1 : -1)
+                                    .map((student: Student) => (
+                                    <StudentItelVague
+                                        key={student.id}
+                                        student={student}
+                                        handleToogleStatus={handleToogleStatus}
+                                        handleDeleteStudent={handleDeleteStudent}
+                                        setOpenMenuId={setOpenMenuId}
+                                        openMenuId={openMenuId}
+                                    />
+                                    ))
+                                :
+                                <div className='text-center my-10'>
+                                    <Badge icon type="warning">
+                                        Pas d'élèves pour le moment!!
+                                    </Badge>
+                                </div>
+                            }
+                        </ul>
+                    </div>
+                  }
 
-                                            <Badge icon type="error">Inactif</Badge>
-                                        }
-                                        </span>
-
-                                         <div>
-                                            <div className="relative">
-                                                <button
-                                                onClick={() =>
-                                                    setOpenMenuId(openMenuId === student.id ? null : student.id)
-                                                }
-                                                className="p-1 rounded hover:bg-gray-200 hover:text-gray-900 transition"
-                                                >
-                                                {
-                                                    openMenuId === student.id ?
-                                                        <X size={16} />
-                                                    :
-
-                                                    <MoreHorizontal size={16} />
-                                                }
-                                                </button>
-
-                                                {openMenuId === student.id && (
-                                                <ul className="absolute right-0 mt-1 flex bg-gray-100 border hover:border-gray-600 rounded shadow-md z-50">
-                                                    <li
-                                                    onClick={() => handleDeleteStudent(student.id)}
-                                                    className="px-3 py-2 hover:bg-white cursor-pointer text-red-500">
-                                                        <Trash2 size={16} />
-                                                    </li>
-                                                    <li className="px-3 py-2 hover:bg-white cursor-pointer text-green-500">
-                                                        <Edit size={16} />
-                                                    </li>
-                                                    <li className="px-3 py-2 hover:bg-white cursor-pointer text-blue-500">
-                                                        <Link href={route("admin.student.show", student.slug)} className="text-blue-600 hover:text-blue-800 transition">
-                                                            <Eye size={16} />
-                                                        </Link>
-                                                    </li>
-                                                </ul>
-                                                )}
-                                            </div>
-                                         </div>
-                                    </div>
-                                </li>
-                            ))
-                         :
-                         <div className='text-center my-10'>
-                            <Badge icon type="warning">
-                                Pas d'élèves pour le moment!!
-                            </Badge>
-                         </div>
-                     }
-                   </ul>
                 </div>
                </article>
             </Modal>

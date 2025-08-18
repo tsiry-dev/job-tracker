@@ -34,6 +34,8 @@ class AdminVagueController extends Controller
 
     public function destroy(VagueDeleteRequest $request, VagueDeleteAction $action)
     {
+
+        // dd($request->ids);
         $action->handle($request->ids);
 
     }

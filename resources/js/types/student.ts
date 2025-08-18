@@ -1,4 +1,4 @@
-import type { Vague } from "./vague";
+import type { Vague, VagueWithModules } from "./vague";
 
 export type Student = {
     id: number;
@@ -7,5 +7,9 @@ export type Student = {
     slug: string;
     phone: string;
     status: boolean;
-    vague: Vague
+    vague: VagueWithModules
+};
+
+export type StudentFull = Student & {
+  vague: Vague;
 };

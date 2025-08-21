@@ -31,28 +31,12 @@ class DatabaseSeeder extends Seeder
 
         DB::table('levels')->insert(Level::LEVEL_LISTS);
         DB::table('langages')->insert(Langage::LANGAGE_LISTS);
+
         DB::table('modules')->insert(Module::MODULE_LISTS);
 
         Vague::factory(10)->create();
         Student::factory(30)->create();
         Observation::factory(30)->create();
-
-        $modules = Module::all();
-        $vagues = Vague::all();
-
-        foreach ($vagues as $vague) {
-            foreach ($modules as $module) {
-
-                DB::table('module_vagues')->insert(
-                    [
-                        'vague_id' => $vague->id,
-                        'module_id' => $module->id,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]
-                );
-            }
-        }
 
 
     }

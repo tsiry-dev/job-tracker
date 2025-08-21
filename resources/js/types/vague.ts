@@ -14,7 +14,7 @@ export type Vague = {
     level: any;
 };
 
-type Module = {
+export type Module = {
     id: number;
     name: string;
     slug: string;

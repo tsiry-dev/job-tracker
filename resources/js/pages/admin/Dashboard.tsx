@@ -1,13 +1,57 @@
 import AppLayout from "@/layouts/auth/AppLayout";
-import React, { useEffect, useRef } from "react";
+import React, { act, useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import { Package, ShoppingCart, DollarSign, Users, BookUser, User } from "lucide-react";
 import MainTitle from "@/components/app/MainTitle";
 import Badge from "@/components/app/Badge";
+import type { Vague } from "@/types/vague";
+import type { Student } from "@/types/student";
 
-export default function Dashboard() {
+
+type DashboardProps = {
+    vagues: Vague[];
+    students: Student[];
+}
+
+export default function Dashboard({vagues, students}: DashboardProps) {
+
+
+    console.log(vagues);
+    console.log(students);
+
+
   const barChartRef = useRef<HTMLDivElement>(null);
   const lineChartRef = useRef<HTMLDivElement>(null);
+
+  const SALAIRE_PER_VAGUE = 250000;
+
+  const normaleSalaire = () =>  {
+      const nbVagues = vagues.length;
+      const total = +SALAIRE_PER_VAGUE * +nbVagues;
+      return total;
+  }
+
+  const actifVagues = () => vagues.filter(s => s.status);
+  const actifStudents = () => students.filter(s => s.status);
+
+  const salairePerStudents = () => {
+      let total = 0;
+      const nbStudents = actifStudents().length;
+
+      const vaguesActifs = actifVagues().length;
+      const studentsActifs = actifStudents().length;
+
+      const correctStudent = vaguesActifs * 8;
+
+      if(nbStudents >= correctStudent) {
+          total = vaguesActifs * SALAIRE_PER_VAGUE;
+      }else {
+          total = vaguesActifs * (SALAIRE_PER_VAGUE / 2);
+      }
+      return total;
+  }
+
+
 
   useEffect(() => {
     let barChart: echarts.ECharts | null = null;
@@ -25,7 +69,7 @@ export default function Dashboard() {
           {
             name: "Ventes",
             type: "bar",
-            data: [200000, 400000, 600000, 800000, 1000000, 1400000],
+            data: [salairePerStudents(), 400000, 600000, 800000, 1000000, 1400000],
             itemStyle: { color: "#0891b2" },
           },
         ],
@@ -36,13 +80,13 @@ export default function Dashboard() {
     if (lineChartRef.current) {
       lineChart = echarts.init(lineChartRef.current);
       lineChart.setOption({
-        title: { text: "Eleves par mois" },
+        title: { text: "Eleves actif par mois" },
         tooltip: { trigger: "axis" },
-        xAxis: { type: "category", data: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin"] },
+        xAxis: { type: "category", data: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin","Juil", "Août", "Sept", "Oct", "Nov", "Déc"] },
         yAxis: { type: "value" },
         series: [
           {
-            data: [2, 4, 8, 10, 12],
+            data: [actifStudents().length, 14,26, 38, 50, 62],
             type: "line",
             smooth: true,
             areaStyle: { color: "rgba(6, 182, 212, 0.2)" },
@@ -67,12 +111,29 @@ export default function Dashboard() {
   }, []);
 
   const stats = [
-    { label: "Vagues", value: 120, icon: <BookUser className="text-cyan-700" size={28} /> },
-    { label: "Eleves", value: 22, icon: <User className="text-green-600" size={28} /> ,actif: 14, inactif: 8},
-    { label: "Salaire", value: "800 000 AR", icon: <DollarSign className="text-yellow-500" size={28} /> },
-    { label: "Salaire", value: "800 000 AR", icon: <DollarSign className="text-yellow-500" size={28} /> },
-    { label: "Salaire", value: "800 000 AR", icon: <DollarSign className="text-yellow-500" size={28} /> },
-    { label: "Clients", value: 350, icon: <Users className="text-purple-600" size={28} /> },
+    {
+        label: "Vagues",
+        value: vagues.length,
+        icon: <BookUser className="text-cyan-700" size={28} /> ,
+        actif: vagues.filter(s => s.status).length,
+        inactif: vagues.filter(s => !s.status).length
+    },
+    {
+        label: "Eleves",
+        value: students.length,
+        icon: <User className="text-green-600" size={28} /> ,
+        actif: students.filter(s => s.status).length,
+        inactif: students.filter(s => !s.status).length
+    },
+    {
+        label: `Salaire en fonction du vague (${actifVagues().length})`,
+        value: `${normaleSalaire()} AR`, icon: <DollarSign className="text-yellow-500" size={28} /> },
+    {
+        label: `Salaire en fonction des eleves (${actifStudents().length})`,
+        value: `${salairePerStudents()} AR`,
+        icon: <Users
+        className="text-purple-600" size={28} />
+    },
   ];
 
   return (
@@ -95,14 +156,14 @@ export default function Dashboard() {
                     stat.actif &&
                     <div className="flex flex-col items-end gap-2">
                         <Badge icon type="success">
-                            <span>Actif</span>&nbsp;&nbsp;
-                            <span className="w-7 h-7 flex items-center justify-center bg-green-500 text-white rounded-full">
+                            <span className="text-[8px]">Actif</span>&nbsp;&nbsp;
+                            <span className="w-5 h-5 flex items-center justify-center bg-green-500 text-white rounded-full">
                             {stat.actif}
                             </span>
                         </Badge>
                         <Badge icon type="error">
-                            <span>Actif</span>&nbsp;&nbsp;
-                            <span className="w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full">
+                            <span className="text-[8px]">Inactif</span>&nbsp;&nbsp;
+                            <span className="w-5 h-5 flex items-center justify-center bg-red-500 text-white rounded-full">
                             {stat.inactif}
                             </span>
                         </Badge>

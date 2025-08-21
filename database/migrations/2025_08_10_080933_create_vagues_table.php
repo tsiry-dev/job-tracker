@@ -28,21 +28,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('module_vagues', function (Blueprint $table) {
-            $table->id();
 
-            $table->foreignId('vague_id')
-                  ->constrained('vagues')
-                  ->cascadeOnDelete();
-
-            $table->foreignId('module_id')
-                  ->nullable()
-                  ->constrained('modules')
-                  ->cascadeOnDelete();
-
-
-            $table->timestamps();
-        });
     }
 
     /**

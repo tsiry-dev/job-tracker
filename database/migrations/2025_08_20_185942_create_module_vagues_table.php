@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Module;
+use App\Models\ModuleVague;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,18 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('module_vagues', function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('level_id')
-                  ->nullable()
-                  ->constrained()
-                  ->nullOnDelete();
+            $table->foreignId('vague_id')
+                  ->constrained('vagues')
+                  ->cascadeOnDelete();
 
             $table->string('name');
-            $table->string('slug');
             $table->text('description')->nullable();
-
+            $table->integer('status')->default(0);
             $table->timestamps();
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('modules');
+        Schema::dropIfExists('module_vagues');
     }
 };

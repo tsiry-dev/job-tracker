@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\{
     AdminVagueController
 };
 
+use App\Http\Controllers\Admin\AdminModuleController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'admin'])
@@ -39,6 +40,9 @@ Route::middleware(['auth', 'admin'])
         Route::get('/student/{slug}', 'show')
             ->name('student.show');
 
+        Route::post('/student', 'store')
+            ->name('student.store');
+
         Route::put('/student/update', 'update')
             ->name('student.update');
 
@@ -52,6 +56,20 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('/levels', 'index')
             ->name('levels.index');
+
+        Route::post('/levels', 'store')
+            ->name('levels.store');
+
+        Route::delete('/levels', 'destroy')
+            ->name('levels.destroy');
+
+    });
+
+    Route::controller(AdminModuleController::class)->group(function() {
+
+
+        Route::get('/modules', 'index')
+              ->name('modules.index');
 
     });
 

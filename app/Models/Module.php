@@ -11,27 +11,24 @@ class Module extends Model
     use HasFactory;
 
     protected $fillable = [
+        'level_id',
         'name',
         'slug',
         'description'
     ];
 
-    const PENDING = 'en attente';
-    const PROGRESS = 'en cours';
-    CONST FINISHED = 'terminé';
-
     const MODULE_LISTS = [
         [
+            'level_id' => 1,
             'name' => 'HTML & CSS',
             'slug' => 'html-css',
             'description' => '',
-            'status' => self::FINISHED,
         ],
         [
+            'level_id' => 1,
             'name' => 'Javascript & algorithme',
             'slug' => 'javascript-algorithme',
             'description' => '',
-            'status' => self::PENDING
         ],
     ];
 

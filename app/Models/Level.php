@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Level extends Model
@@ -29,8 +30,14 @@ class Level extends Model
         ],
     ];
 
-    public function modules(): HasMany
+
+    public function vagues()
     {
-        return $this->hasMany(Module::class, 'module_id');
+        return $this->hasMany(Vague::class, 'level_id');
+    }
+
+    public function modules()
+    {
+        return $this->hasMany(Module::class, 'level_id');
     }
 }

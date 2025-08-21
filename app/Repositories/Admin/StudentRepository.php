@@ -3,7 +3,10 @@
 namespace App\Repositories\Admin;
 
 use App\Contracts\Admin\StudentInterface;
-use App\Dtos\Admin\Students\StudentUpdateDTO;
+use App\Dtos\Admin\Students\{
+    StudentStoreDTO,
+    StudentUpdateDTO
+};
 use App\Models\Student;
 
 class StudentRepository implements StudentInterface
@@ -14,6 +17,17 @@ class StudentRepository implements StudentInterface
     public function __construct()
     {
         //
+    }
+
+    public function store(StudentStoreDTO $data): Student
+    {
+        return Student::create([
+           'vague_id' => $data->vague_id,
+           'name' => $data->name,
+           'slug' => \Illuminate\Support\Str::slug($data->name),
+           'phone' => $data->phone,
+           'status' => true
+        ]);
     }
 
     public function toggleStatus(int $id): void

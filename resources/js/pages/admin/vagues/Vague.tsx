@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useForm } from '@inertiajs/react';
-import { Edit, Trash2, Eye, Users, Save, BookUser, CirclePlay, Gauge, Ban, ShieldCheck, ShieldX, User, MoreVertical, MoreHorizontal, X } from 'lucide-react';
+import { Edit, Trash2, Eye, Users, Save, BookUser, CirclePlay, Gauge, Ban, ShieldCheck, ShieldX, User, MoreVertical, MoreHorizontal, X, Plus } from 'lucide-react';
 import Swal from 'sweetalert2';
 
-import type { Vague } from '@/types/vague';
+import type { Vague, Module } from '@/types/vague';
 import type { Level } from '@/types/level';
 
 import AppLayout from '@/layouts/auth/AppLayout';
@@ -22,8 +22,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/app/store';
 import { handleResetStudentSelected } from '@/features/studentSlice';
 import UpdateStudent from './UpdateStudent';
-import { setActif, setVague } from '@/features/vagueSlice';
+import { closeCreateStudentHandler, createStudentHandler, removeSelectedStudentDetail, setActif, setVague } from '@/features/vagueSlice';
 import { handleSelectedVague } from '@/features/vagueSlice';
+import VagueCreateStudent from './VagueCreateStudent';
+import VagueStudentDetail from './VagueStudentDetail';
 
 
 
@@ -55,11 +57,17 @@ type VagueProps = {
     levels: Level[]
 };
 
+type ModuleValue = 0 | 1 | 2;
+
+type ModuleStatus = {
+    label: string;
+    value: ModuleValue;
+}
+
 export default function Vague({ vagues , levels}: VagueProps) {
 
     // console.log(vagues);
     const dispatch = useDispatch();
-
 
 
    const [isOpenModalCreate, setIsOpenModalCreate] = useState(false);
@@ -72,6 +80,31 @@ export default function Vague({ vagues , levels}: VagueProps) {
    const studentSelected = useSelector((state: RootState) => state.students.selected);
    const vagueList = useSelector((state: RootState) => state.vagues.vagues);
    const selectedVagueItem = useSelector((state: RootState) => state.vagues.selectedVague);
+   const isCreateStudent = useSelector((state: RootState) => state.vagues.isCreateStudent);
+   const selectedStudenDetail = useSelector((state: RootState) => state.vagues.selectedStudentDetail);
+
+   const MODULE_STATUS: ModuleStatus[] = [
+       { label: 'En attente', value: 0 },
+       { label: 'En cours', value: 1 },
+       { label: 'Terminé', value: 2 }
+   ];
+
+   const moduleStatusBgColor = (module: Module) => {
+      const status = +module.status;
+      switch (status) {
+         case 0:
+            return 'bg-yellow-500';
+         case 1:
+            return 'bg-green-500';
+         case 2:
+            return 'bg-blue-500';
+         default:
+            return 'bg-gray-500';
+      }
+   }
+
+   console.log(selectedVagueItem);
+
 
    useEffect(() =>  {
       dispatch(
@@ -95,10 +128,18 @@ export default function Vague({ vagues , levels}: VagueProps) {
    const handleCloseModalCreate = () => {
       setIsOpenModalCreate(false);
    }
-   const handleCloseModalDetails = () => {
-      setIsOpenModalDetails(false);
-      dispatch(handleSelectedVague(null))
 
+   const resetIfCloseModal = () => {
+      setIsOpenModalDetails(false);
+      dispatch(handleSelectedVague(null));
+      dispatch(closeCreateStudentHandler());
+      setOpenMenuId(null);
+      dispatch(handleResetStudentSelected());
+      dispatch(removeSelectedStudentDetail());
+   }
+
+   const handleCloseModalDetails = () => {
+      resetIfCloseModal();
    }
 
    const handleSelectVague = (id: number) => {
@@ -245,6 +286,21 @@ export default function Vague({ vagues , levels}: VagueProps) {
         });
 
    }
+
+   //STUDENTS
+   const handleCreateStudent = () => {
+       dispatch(createStudentHandler());
+   }
+
+   const handleCloseCreateStudent = () => {
+       dispatch(closeCreateStudentHandler());
+   }
+
+   //MODULES
+   const handleUpdateModuleStatus = () => {
+
+   }
+
 
 
   return (
@@ -409,45 +465,119 @@ export default function Vague({ vagues , levels}: VagueProps) {
                      </Badge>
                      <span><strong>Status: </strong>{selectedVague?.status ? 'Actif' : 'Plus actif'}</span>
                    </h2>
+
+                   <div className='p-2 mt-3'>
+                      {selectedVague?.modules.length > 0 &&
+                      <>
+                        <div className='bg-gray-300 border-1 border-gray-400 my-2 rounded-2xl relative overflow-hidden h-[1.5rem]'>
+                            <div className='absolute top-0 left-0 bg-yellow-400 w-[40%] h-full flex justify-end'><span>15%</span></div>
+                        </div>
+                        <ul>
+                            {selectedVague?.modules.map((module: Module) => (
+                                <li key={module.id} className='bg-blue-100 p-2 border-1 border-gray-400 flex gap-2 items-center justify-between mb-2'>
+                                    <div>{module.name}</div>
+                                    <div>
+                                        <select
+                                        defaultValue={module.status}
+                                        name="status" id="status" className={`${moduleStatusBgColor(module)} p-1 rounded-sm`}>
+                                            {MODULE_STATUS.map((status: ModuleStatus) => (
+                                                <option
+                                                    value={status.value}
+                                                    key={status.value}>
+                                                        {status.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                      </>
+                      }
+                   </div>
                 </div>
 
                 <div className='student-list'>
-                  {studentSelected ?
-                      <UpdateStudent
-                           setOpenMenuId={setOpenMenuId}
-                           setSelectedVague={setSelectedVague}
-                           selectedVague={selectedVague}
-                           setIsOpenModalDetails={setIsOpenModalDetails}
-                           vagueList={vagueList}
-                    />
+                  {selectedStudenDetail ?
+                  <>
+                     <VagueStudentDetail />
+                  </>
                   :
-                    <div>
-                        <h2 className='flex gap-2 items-end'><Users /> <span>eleves  <strong>({selectedVague?.students?.length ?? 0})</strong></span></h2>
+                  <>
+                      {studentSelected ?
+                          <UpdateStudent
+                               setOpenMenuId={setOpenMenuId}
+                               setSelectedVague={setSelectedVague}
+                               selectedVague={selectedVague}
+                               setIsOpenModalDetails={setIsOpenModalDetails}
+                               vagueList={vagueList}
+                        />
+                      :
+                        <div>
+                            <div className='flex gap-2 items-center justify-between'>
+                              <h2 className='flex gap-2 items-end'>
+                                   <Users />
+                                   {isCreateStudent ?
+                                    <span>Ajouter un nouvelle élève</span>
+                                   :
 
-                        <ul className='mt-3'>
-                            {
-                                selectedVagueItem?.students.length ?? 0 > 0 ?
-                                    selectedVagueItem?.students
-                                    // .sort((a: Student , b: Student) => a.status < b.status ? 1 : -1)
-                                    .map((student: Student) => (
-                                    <StudentItelVague
-                                        key={student.id}
-                                        student={student}
-                                        handleToogleStatus={handleToogleStatus}
-                                        handleDeleteStudent={handleDeleteStudent}
-                                        setOpenMenuId={setOpenMenuId}
-                                        openMenuId={openMenuId}
-                                    />
-                                    ))
-                                :
-                                <div className='text-center my-10'>
-                                    <Badge icon type="warning">
-                                        Pas d'élèves pour le moment!!
-                                    </Badge>
-                                </div>
+                                   <span>eleves<strong>({selectedVague?.students?.length ?? 0})</strong></span>
+                                   }
+                              </h2>
+
+                              <div>
+                                {isCreateStudent ?
+
+                                    <button
+                                        onClick={handleCloseCreateStudent}
+                                        className='bg-primary p-1 rounded-sm cursor-pointer'>
+                                       <X  size={15} color='white'/>
+                                    </button>
+                                 :
+                                    <button
+                                        onClick={handleCreateStudent}
+                                        className='bg-primary p-1 rounded-sm cursor-pointer'>
+                                        <Plus size={15} color='white'/>
+                                    </button>
+                                }
+
+                              </div>
+                            </div>
+
+                           <div className='mt-3'>
+                            {!isCreateStudent ?
+                                <ul className=''>
+                                    {
+                                        selectedVagueItem?.students.length ?? 0 > 0 ?
+                                            selectedVagueItem?.students
+                                            // .sort((a: Student , b: Student) => a.status < b.status ? 1 : -1)
+                                            .map((student: Student) => (
+                                            <StudentItelVague
+                                                key={student.id}
+                                                student={student}
+                                                handleToogleStatus={handleToogleStatus}
+                                                handleDeleteStudent={handleDeleteStudent}
+                                                setOpenMenuId={setOpenMenuId}
+                                                openMenuId={openMenuId}
+                                            />
+                                            ))
+                                        :
+                                        <div className='text-center my-10'>
+                                            <Badge icon type="warning">
+                                                Pas d'élèves pour le moment!!
+                                            </Badge>
+                                        </div>
+                                    }
+                                </ul>
+                            :
+                                <VagueCreateStudent />
                             }
-                        </ul>
-                    </div>
+                           </div>
+
+
+                        </div>
+                      }
+                  </>
                   }
 
                 </div>

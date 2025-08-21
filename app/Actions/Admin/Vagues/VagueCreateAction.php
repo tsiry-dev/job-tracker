@@ -3,7 +3,7 @@
 namespace App\Actions\Admin\Vagues;
 
 use App\Dtos\Admin\Vagues\VagueCreateDTO;
-use App\Services\Admin\VagueServices;
+use App\Services\Admin\VagueService;
 
 class VagueCreateAction
 {
@@ -11,7 +11,7 @@ class VagueCreateAction
      * Create a new class instance.
      */
     public function __construct(
-        private VagueServices $services
+        private VagueService $services
     )
     {
         //

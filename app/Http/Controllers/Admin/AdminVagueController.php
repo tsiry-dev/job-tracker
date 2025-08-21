@@ -39,4 +39,5 @@ class AdminVagueController extends Controller
         $action->handle($request->ids);
 
     }
+
 }

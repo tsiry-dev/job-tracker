@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ChartNoAxesCombined, Gauge, Users, X } from "lucide-react";
+import { ChartNoAxesCombined, Component, Gauge, Users, X } from "lucide-react";
 import { Link } from "@inertiajs/react";
 
 interface SidebarProps {
@@ -40,6 +40,10 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, onClose }) => {
           <Link href={route("admin.levels.index")} className="px-3 py-2 rounded hover:bg-cyan-600 flex items-start gap-2">
             <span className=""><Gauge size={15} /></span>
             <span>Niveaux</span>
+          </Link>
+          <Link href={route("admin.modules.index")} className="px-3 py-2 rounded hover:bg-cyan-600 flex items-start gap-2">
+            <span className=""><Component size={15} /></span>
+            <span>Modules</span>
           </Link>
         </nav>
       </aside>

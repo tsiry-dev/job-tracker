@@ -13,7 +13,7 @@ type StudentShowProps = {
 
 export default function StudentShow( {student}: StudentShowProps) {
 
-    console.log(student.vague.modules);
+    console.log(student.vague);
 
 
   return (
@@ -70,7 +70,7 @@ export default function StudentShow( {student}: StudentShowProps) {
           <div className="rounded-2xl bg-white p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
               {student?.vague.modules.map((module) => {
                  return (
-                    <div className="bg-green-200 py-1 px-3 rounded-sm mb-2 text-sm">
+                    <div key={module.id} className="bg-green-200 py-1 px-3 rounded-sm mb-2 text-sm">
                        {module.name}
                     </div>
                  )

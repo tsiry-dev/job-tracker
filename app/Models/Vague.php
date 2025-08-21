@@ -32,9 +32,9 @@ class Vague extends Model
         return $this->belongsTo(Level::class, 'level_id');
     }
 
-    public function modules(): BelongsToMany
+    public function modules(): HasMany
     {
-        return $this->belongsToMany(Module::class, 'module_vagues');
+        return $this->hasMany(ModuleVague::class, 'vague_id');
     }
 
 }
